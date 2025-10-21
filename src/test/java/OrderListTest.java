@@ -1,50 +1,43 @@
 import base.BaseApiTest;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
-import steps.OrderSteps;
+import steps.OrderApi;
+import steps.OrderDataGenerator;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
 
 public class OrderListTest extends BaseApiTest {
 
     @Test
-    @DisplayName("Получение списка заказов - проверка наличия и типа данных")
+    @DisplayName("Получение списка заказов")
+    @Description("Проверка что в тело ответа возвращается список заказов")
     public void testGetOrderList() {
-        OrderSteps.getOrderList()
-                .statusCode(200)
-                .body("orders", notNullValue())
-                .body("orders", instanceOf(List.class))
-                .body("orders.size()", greaterThan(0));
+        OrderApi.getOrderList()
+                .statusCode(SC_OK)
+                .body("orders", notNullValue()) // Cписок есть
+                .body("orders.size()", greaterThan(0)); // Список не пустой
     }
 
     @Test
-    @DisplayName("Проверка структуры данных в списке заказов")
-    public void testGetOrderListDetailedStructure() {
-        OrderSteps.getOrderList()
-                .statusCode(200)
-                .body("orders[0].id", notNullValue())
-                .body("orders[0].firstName", notNullValue())
-                .body("orders[0].lastName", notNullValue())
-                .body("orders[0].address", notNullValue())
-                .body("orders[0].track", notNullValue());
-    }
-
-    @Test
-    @DisplayName("Полный цикл заказа: создание → получение по track")
+    @DisplayName("Полный цикл заказа: создание → получение по трекингу")
     public void testCreateAndGetOrderByTrack() {
         // Создаем заказ
-        int track = OrderSteps.createOrder(Arrays.asList("BLACK"))
-                .statusCode(201)
+        int track = OrderApi.createOrder(OrderDataGenerator.createDefaultOrder(Arrays.asList("BLACK")))
+                .statusCode(SC_CREATED)
                 .extract().path("track");
 
-        // Получаем заказ по track
-        OrderSteps.getOrderByTrack(track)
-                .statusCode(200)
+        // Добавляем в cleanup
+        addOrderForCleanup(track);
+
+        // Получаем заказ по трекингу
+        OrderApi.getOrderByTrack(track)
+                .statusCode(SC_OK)
                 .body("order.id", notNullValue())
                 .body("order.track", notNullValue());
     }

@@ -26,36 +26,24 @@ public class TestData {
     }
     public static String getOrderComment() { return user.lorem().sentence(3, 5); }
 
-    // Цвета для параметризации
-    public static List<List<String>> getColorCombinations() {
-        return Arrays.asList(
-                Arrays.asList("BLACK"),
-                Arrays.asList("GREY"),
-                Arrays.asList("BLACK", "GREY"),
-                null,
-                Arrays.asList()
-        );
-    }
-
-    // Метод для параметризованных тестов (преобразуем в Object[][])
+    // Данные для параметризованных тестов заказов
     public static Object[][] getOrderColorData() {
-        List<List<String>> colorCombinations = getColorCombinations();
-        Object[][] data = new Object[colorCombinations.size()][1];
-        for (int i = 0; i < colorCombinations.size(); i++) {
-            data[i][0] = colorCombinations.get(i);
-        }
-        return data;
+        return new Object[][]{
+                {Arrays.asList("BLACK"), "создание заказа с черным цветом"},
+                {Arrays.asList("GREY"), "создание заказа с серым цветом"},
+                {Arrays.asList("BLACK", "GREY"), "создание заказа с обоими цветами"},
+                {null, "создание заказа без указания цвета"},
+                {Arrays.asList(), "создание заказа с пустым списком цветов"}
+        };
     }
 
     // Дефолтные значения для заказов
-    public static class OrderDefaults {
-        public static final String FIRST_NAME = "Иван";
-        public static final String LAST_NAME = "Петров";
-        public static final String ADDRESS = "Москва, ул. Ленина, 1";
-        public static final int METRO_STATION = 5;
-        public static final String PHONE = "+79991234567";
-        public static final String RENT_TIME = "3";
-        public static final String DELIVERY_DATE = "2024-01-15";
-        public static final String COMMENT = "Тестовый заказ";
-    }
+    public static final String ORDER_FIRST_NAME = "Иван";
+    public static final String ORDER_LAST_NAME = "Петров";
+    public static final String ORDER_ADDRESS = "Москва, ул. Ленина, 1";
+    public static final int ORDER_METRO_STATION = 5;
+    public static final String ORDER_PHONE = "+79991234567";
+    public static final String ORDER_RENT_TIME = "3";
+    public static final String ORDER_DELIVERY_DATE = "2024-01-15";
+    public static final String ORDER_COMMENT = "Тестовый заказ";
 }
